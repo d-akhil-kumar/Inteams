@@ -22,7 +22,7 @@ module.exports = async (req, res, next) => {
             req.user = {
                 _id: '',
                 email: '',
-                isadmin: ''
+                isAdmin: ''
             }
             */
             req.user = decoded

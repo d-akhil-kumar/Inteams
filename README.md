@@ -44,3 +44,4 @@ Inteams requires [Node.js](https://nodejs.org/) v12+ to run.
     ```sh
     npm start
     ```
+5. hit GET: '/setup' API to load dummy data to your DB

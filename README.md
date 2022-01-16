@@ -16,6 +16,7 @@ Inteams uses a number of open source projects to work properly
 - [node.js](http://nodejs.org/) - evented I/O for the backend
 - [Express](http://expressjs.com/) - fast node.js network app framework
 - [MongoDB](https://www.mongodb.com/) - NoSQL database
+- [Socket.io](https://socket.io/) - Bidirectional and low-latency communication for every platform
 
 ## UI/UX
  - Adobe XD

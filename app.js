@@ -14,10 +14,11 @@ const setEnvironment = require('./set_env/add_data_to_db')
 const errorMiddleware = require('./middlewares/error')
 const requestLoggerMiddleware = require('./middlewares/request_logger')
 const helmet = require('helmet')
+const groupsActiveUsers = require('./services/updateActiveUsers')
 
 
 const app = express()
-const server = http.createServer(app)
+//const server = http.createServer(app)
 
 
 app.use(helmet())
@@ -56,6 +57,28 @@ app.use(auth)
 
 const PORT = process.env.PORT || 8080
 
-server.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
     console.log(`Server is running on port: ${PORT}`)
+})
+
+const io = require('./services/socket').initSocketIO(server)
+
+io.on('connection', socket => {
+    console.log('client connection')
+
+    socket.on('joinGroup', ({ email, project, group }) => {
+        const activeUsers = groupsActiveUsers.makeUserActive({ email, project, group }, socket.id)
+        socket.emit(`${project}/${group}`, {
+            action: 'active_users',
+            data: activeUsers
+        })
+    })
+
+    socket.on('disconnect', () => {
+        const { actUsers, grpName } = groupsActiveUsers.makeUserInactive(socket.id)
+        socket.emit(grpName, {
+            action: 'active_users',
+            data: actUsers
+        })
+    })
 })

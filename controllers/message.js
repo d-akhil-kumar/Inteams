@@ -3,6 +3,7 @@
 const msgModel = require('../models/message')
 const mongoSanitize = require('mongo-sanitize')
 const canUserAcessGroup = require('../services/canUserAcessGroup')
+const io = require('../services/socket')
 
 exports.getMessagesByProjectAndGroup = async (req, res, next) => {
     try {
@@ -85,8 +86,14 @@ exports.addMessage = async (req, res, next) => {
         const canAccess = await canUserAcessGroup(msgData)
 
         if (canAccess) {
-            //TODO [P:5]: add socket broadcast
-            await msgModel.create(msgData)
+            const msg = await msgModel.create(msgData)
+
+            //DONE [P:5]: add socket broadcast
+            io.getSocketIO().emit(`${msgData.project}/${msgData.group}`, {
+                action: 'msg_sent',
+                data: msg
+            })
+
             res.status(200).json(
                 {
                     status: 'success',
